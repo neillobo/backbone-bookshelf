@@ -1,19 +1,7 @@
-<html>
-  <head>
-    <title>Shelf of Books</title>
-  </head>
-  <body>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
-  </body>
-</html>
 
-var bookData = {
-			 
+
+var bookData = {			 
 			  "books": [
-
 			    {"category": "cooking", 
 			     "year": 2009, 
 			     "price": 22.00, 
@@ -50,7 +38,7 @@ var bookData = {
 			    {"category": "JavaScript", "year": 1999, "price": 85.50, 
 			   "title": "3 months to a better life", "author": "Champion Champ"},
 			  ]
-};
+			};
 
 var Book = Backbone.Model.extend({ 
 	defaults: { 
@@ -59,10 +47,31 @@ var Book = Backbone.Model.extend({
 		price: 0.00, 
 		title: '', 
 		author: ''
-	});
+		}
+});
 
 
 var Books = Backbone.Collection.extend({model: Book});
 
-var ShelfView = Backbone.View.extend({collection: Books});
+var ShelfView = Backbone.View.extend({
+
+	tagName : 'ul',
+
+	initialize : function(){
+	  this.render();
+	  this.collection.on('change',this.render); //might have to add this?
+	},
+
+	template : _.template('<li><%= title %>, <%= author %>, <%= price %></li>'),
+
+	render : function(){
+		var context = this;
+		var title;
+		this.$el.html('');
+		context.collection.each(function (model){
+			context.$el.append(context.template(model.attributes));
+		});
+		return this;
+	}
+});
 
